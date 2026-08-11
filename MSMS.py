@@ -25,6 +25,8 @@ teacher_db = []
 next_student_id = 1
 next_teacher_id = 1
 
+
+# --- Core Helper Functions ---
 def add_teacher(name, speciality):
     """Creates a Teacher object and adds it to the database."""
     global next_teacher_id
