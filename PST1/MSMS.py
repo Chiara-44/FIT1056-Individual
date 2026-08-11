@@ -76,6 +76,7 @@ def find_students(term):
 
 def find_teachers(term):
     """Finds teachers by name or speciality."""
+    print(f"\n--- Finding teachers matching '{term}' ---")
     # Implement this function similar to find_students, but check
     # for the term in BOTH the teacher's name AND their speciality.
 
@@ -93,7 +94,7 @@ def find_teachers(term):
         print("No match found.")
     else:
         for teacher in matches_list:
-            print(f"  ID: {teacher.id}, Name: {student.name}, Specialty in: {teacher.enrolled_in}")
+            print(f"  ID: {teacher.id}, Name: {teacher.name}, Specialty in: {teacher.speciality}")
 
 
 
@@ -136,3 +137,54 @@ def front_desk_lookup(term):
     print(f"\n--- Performing lookup for '{term}' ---")
     find_students(term)
     find_teachers(term)
+
+
+
+# --- Main Application ---
+def main():
+    """Runs the main interactive menu for the receptionist."""
+    # Pre-populate some data for easy testing
+    add_teacher("Dr. Keys", "Piano")
+    add_teacher("Ms. Fret", "Guitar")
+
+    while True:
+        print("\n===== Music School Front Desk =====")
+        print("1. Register New Student")
+        print("2. Enrol Existing Student")
+        print("3. Lookup Student or Teacher")
+        print("4. (Admin) List all Students")
+        print("5. (Admin) List all Teachers")
+        print("q. Quit")
+        
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            # Prompt for student name and instrument, then call front_desk_register.
+            name = input("Enter student name: ")
+            instrument = input("Enter instrument to enrol in: ")
+            front_desk_register(name, instrument)
+        elif choice == '2':
+            # Prompt for student ID (as an int) and instrument, then call front_desk_enrol.
+            try:
+                student_id = int(input("Enter student ID: "))
+                instrument = input("Enter instrument to enrol in: ")
+                front_desk_enrol(student_id, instrument)
+            except ValueError:
+                print("Invalid ID. Please enter a number.")
+        elif choice == '3':
+            # Prompt for a search term, then call front_desk_lookup.
+            term = input("Enter search term: ")
+            front_desk_lookup(term)
+        elif choice == '4':
+            list_students()
+        elif choice == '5':
+            list_teachers()
+        elif choice.lower() == 'q':
+            print("Exiting program. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+# --- Program Start ---
+if __name__ == "__main__":
+    main()
