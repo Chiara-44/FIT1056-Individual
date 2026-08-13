@@ -76,12 +76,12 @@ def remove_teacher(teacher_id):
         print(f"Error: Teacher with ID {teacher_id} not found.")
     pass
     
-def add_student(name, speciality):
+def add_student(name, enrolled_in):
     """Adds a student dictionary to the data store."""
     #Get the next student ID from app_data['next_student_id'].
     student_id = app_data['next_student_id']
     #Create a new student dictionary with 'id', 'name', and 'speciality' keys.
-    new_student = {"id": student_id, "name": name, "speciality": speciality}
+    new_student = {"id": student_id, "name": name, "enrolled in": enrolled_in}
     #Append the new dictionary to the app_data['students'] list.
     app_data['students'].append(new_student)
     #Increment the 'next_student_id' in app_data.
@@ -113,42 +113,45 @@ def remove_student(student_id):
     pass
 
 
-# --- Front Desk Functions ---
-def find_student_by_id(student_id):
-    """A new helper to find one student by their exact ID."""
-    # Loop through student_db. If a student's ID matches student_id, return the student object.
-    for student in student_db:
-        if student.id == student_id:
-            return student
-    # If the loop finishes without finding a match, return None.
-    return None
-
-def front_desk_register(name, instrument):
-    """High-level function to register a new student and enrol them."""
-    global next_student_id
-    # Create a new Student object, add it to student_db, and increment the ID.
-    new_student = Student(next_student_id, name)
-    student_db.append(new_student)
-    next_student_id += 1
+# --- New Receptionist Features ---
+def check_in(student_id, course_id, timestamp=None):
+    """Records a student's attendance for a course."""
+    if timestamp is None:
+        # Get the current time as a string using datetime.datetime.now().isoformat()
+        timestamp = datetime.datetime.now().isoformat()
     
-    # Immediately call front_desk_enrol() using the new student's ID and the provided instrument.
-    front_desk_enrol(new_student.id, instrument)
-    print(f"Front Desk: Successfully registered '{name}' and enrolled them in '{instrument}'.")
+    # Create a check-in record dictionary.
+    # It should contain 'student_id', 'course_id', and 'timestamp'.
+    check_in_record = {
+        "student_id": student_id,
+        "course_id": course_id,
+        "timestamp": timestamp
+    }
+    # Append this new record to the app_data['attendance'] list.
+    app_data['attendance'].append(check_in_record)
+    print(f"Receptionist: Student {student_id} checked into {course_id}.")
 
-def front_desk_enrol(student_id, instrument):
-    """High-level function to enrol an existing student in a course."""
-    # Use your new find_student_by_id() helper.
-    student = find_student_by_id(student_id)
-    # If the student is found, append the instrument to their 'enrolled_in' list.
-    if student:
-        student.enrolled_in.append(instrument)
-        print(f"Front Desk: Enrolled student {student_id} in '{instrument}'.")
+def print_student_card(student_id):
+    """Creates a text file badge for a student."""
+    # Find the student dictionary in app_data['students'].
+    student_to_print = None
+    for s in app_data['students']:
+        if s['student_id'] == student_id:
+            student_to_print = s
+            break
+    
+    if student_to_print:
+        # Create a filename, e.g., f"{student_id}_card.txt".
+        filename = f"{student_id}_card.txt"
+        # Open the file in write mode ('w').
+        with open(filename, 'w') as f:
+            # Write the student's details to the file in a nice format.
+            f.write("========================\n")
+            f.write(f"  MUSIC SCHOOL ID BADGE\n")
+            f.write("========================\n")
+            f.write(f"ID: {student_to_print['student_id']}\n")
+            f.write(f"Name: {student_to_print['name']}\n")
+            f.write(f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n")
+        print(f"Printed student card to {filename}.")
     else:
-        # If the student is not found, print an error message like "Error: Student ID not found."
-        print(f"Error: Student ID {student_id} not found.")
-
-def front_desk_lookup(term):
-    """High-level function to search everything."""
-    print(f"\n--- Performing lookup for '{term}' ---")
-    find_students(term)
-    find_teachers(term)
+        print(f"Error: Could not print card, student {student_id} not found.")
