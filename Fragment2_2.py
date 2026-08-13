@@ -3,13 +3,13 @@
 
 def add_teacher(name, speciality):
     """Adds a teacher dictionary to the data store."""
-    # TODO: Get the next teacher ID from app_data['next_teacher_id'].
+    #Get the next teacher ID from app_data['next_teacher_id'].
     teacher_id = app_data['next_teacher_id']
-    # TODO: Create a new teacher dictionary with 'id', 'name', and 'speciality' keys.
+    #Create a new teacher dictionary with 'id', 'name', and 'speciality' keys.
     new_teacher = {"id": teacher_id, "name": name, "speciality": speciality}
-    # TODO: Append the new dictionary to the app_data['teachers'] list.
+    #Append the new dictionary to the app_data['teachers'] list.
     app_data['teachers'].append(new_teacher)
-    # TODO: Increment the 'next_teacher_id' in app_data.
+    #Increment the 'next_teacher_id' in app_data.
     app_data['next_teacher_id'] += 1
     print(f"Core: Teacher '{name}' added.")
 
