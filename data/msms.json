@@ -1,0 +1,34 @@
+{
+    "students": [
+        {
+            "student_id": 2,
+            "name": "Chiara",
+            "enrolled_in": [
+                "Keyboard"
+            ]
+        },
+        {
+            "student_id": 3,
+            "name": "Charlotte",
+            "enrolled_in": [
+                "Piano"
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "teacher_id": 1,
+            "name": "Hambly",
+            "speciality": "Band"
+        }
+    ],
+    "attendance": [
+        {
+            "student_id": "4",
+            "course_id": "Piano",
+            "timestamp": "2026-08-15T19:43:35.734306"
+        }
+    ],
+    "next_student_id": 5,
+    "next_teacher_id": 3
+}
