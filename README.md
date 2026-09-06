@@ -20,9 +20,14 @@ The ***"attendence"*** key stores a list of each check-in that has been recorded
 The last two are the next student IDs available for teachers and students.
 
 
-## Core Helper Functions
+## Core Helper Functions in schedule.py
 These are the core functions that help the program run
 The app provides the ability to Create, read, update, and delete all student and teacher instances (CRUD).
+
+
+***build_students
+build_teachers
+build_courses
 
 
 ***add_teacher*** - Takes name and specialty as arguments and creates a teacher list of dicts and adds it to the database.
