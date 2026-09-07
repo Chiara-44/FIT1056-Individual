@@ -1,34 +1,92 @@
 {
     "students": [
         {
-            "student_id": 2,
-            "name": "Chiara",
+            "name": "Alice Johnson",
+            "student_id": 1,
             "enrolled_in": [
-                "Keyboard"
+                101,
+                103
             ]
         },
         {
-            "student_id": 3,
-            "name": "Charlotte",
+            "name": "Bob Williams",
+            "student_id": 2,
             "enrolled_in": [
-                "Piano"
+                101
             ]
         }
     ],
     "teachers": [
         {
+            "name": "Dr. Evelyn Keys",
             "teacher_id": 1,
-            "name": "Hambly",
-            "speciality": "Band"
+            "speciality": "Piano"
+        },
+        {
+            "name": "Mr. David Fret\"",
+            "teacher_id": 2,
+            "speciality": "Guitar"
+        }
+    ],
+    "courses": [
+        {
+            "course_id": 101,
+            "name": "Beginner Piano",
+            "instrument": "Piano",
+            "teacher_id": 1,
+            "enrolled_student_ids": [
+                1,
+                2
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 1,
+                    "day": "Monday",
+                    "start_time": "16:00",
+                    "room": "Room A"
+                },
+                {
+                    "lesson_id": 2,
+                    "day": "Wednesday",
+                    "start_time": "16:00",
+                    "room": "Room A"
+                }
+            ]
+        },
+        {
+            "course_id": 102,
+            "name": "Acoustic Guitar Fundamentals",
+            "instrument": "Guitar",
+            "teacher_id": 2,
+            "enrolled_student_ids": [],
+            "lessons": [
+                {
+                    "lesson_id": 3,
+                    "day": "Tuesday",
+                    "start_time": "17:00",
+                    "room": "Room C"
+                }
+            ]
+        },
+        {
+            "course_id": 103,
+            "name": "Intermediate Piano",
+            "instrument": "Piano",
+            "teacher_id": 1,
+            "enrolled_student_ids": [
+                1
+            ],
+            "lessons": []
         }
     ],
     "attendance": [
         {
-            "student_id": "4",
-            "course_id": "Piano",
-            "timestamp": "2026-08-15T19:43:35.734306"
+            "student_id": 1,
+            "course_id": 101,
+            "timestamp": "2026-09-07T21:49:19.113467"
         }
     ],
-    "next_student_id": 5,
-    "next_teacher_id": 3
+    "next_student_id": 3,
+    "next_teacher_id": 3,
+    "next_lesson_id": 4
 }

@@ -14,6 +14,7 @@ class ScheduleManager:
         self.attendance_log = []
         self.next_student_id = 1
         self.next_teacher_id = 1
+        self.next_lesson_id = 1
         self._load_data()
 
     def _load_data(self):
@@ -29,6 +30,7 @@ class ScheduleManager:
                 # Plain data - no object wrapping needed, so just pull it straight out.
                 self.next_student_id = data.get("next_student_id", 1)
                 self.next_teacher_id = data.get("next_teacher_id", 1)
+                self.next_lesson_id = data.get("next_lesson_id", 1)
 
                 # Correctly load the attendance log.
                 # Use .get() with a default empty list to prevent errors if the key doesn't 
@@ -49,6 +51,7 @@ class ScheduleManager:
             "attendance": self.attendance_log,
             "next_student_id": self.next_student_id,
             "next_teacher_id": self.next_teacher_id,
+            "next_lesson_id": self.next_lesson_id,
         }
         # Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
@@ -58,20 +61,20 @@ class ScheduleManager:
         """Converts a list of raw student dictionaries into StudentUser objects."""
         students = []
         for student_dict in student_dicts:
-            student_id = student_dict["student_id"]
+            id = student_dict["student_id"]
             name = student_dict["name"]
             enrolled_in = student_dict.get("enrolled_in", [])
-            students.append(StudentUser(student_id, name, enrolled_in))
+            students.append(StudentUser(id, name, enrolled_in))
         return students
 
     def build_teachers(self, teacher_dicts):
         """Converts a list of raw teacher dictionaries into TeacherUser objects."""
         teachers = []
         for teacher_dict in teacher_dicts:
-            teacher_id = teacher_dict["teacher_id"]
+            id = teacher_dict["teacher_id"]
             name = teacher_dict["name"]
             speciality = teacher_dict["speciality"]
-            teachers.append(TeacherUser(teacher_id, name, speciality))
+            teachers.append(TeacherUser(id, name, speciality))
         return teachers
 
     def build_courses(self, course_dicts):
@@ -80,8 +83,12 @@ class ScheduleManager:
         for course_dict in course_dicts:
             course_id = course_dict["course_id"]
             name = course_dict["name"]
+            instrument = course_dict["instrument"]
             teacher_id = course_dict.get("teacher_id")
-            courses.append(Course(course_id, name, teacher_id))
+            enrolled_student_ids = course_dict.get("enrolled_student_ids", [])
+            lessons = course_dict.get("lessons", [])
+            courses.append(Course(course_id, name, instrument, teacher_id,
+                                enrolled_student_ids, lessons))
         return courses
 
     def add_teacher(self, name, speciality):
@@ -92,64 +99,94 @@ class ScheduleManager:
         self.teachers.append(teacher)
         #Increment the 'next_teacher_id'
         self.next_teacher_id += 1
+        self._save_data()
         print(f"Core: Teacher '{name}' added.")
 
-    def update_teacher(self, teacher_id, **fields):
+    def update_teacher(self, id, **fields):
         """Finds a teacher by ID and updates their data with provided fields."""
         # Loop through the teachers list.
         for teacher in self.teachers:
-            # If a teacher's 'id' matches teacher_id:
-            if teacher.teacher_id == teacher_id:
+            # If a teacher's 'id' matches id:
+            if teacher.teacher_id == id:
                 # Update fields
                 for key, value in fields.items():
                     setattr(teacher, key, value)
-                print(f"Teacher {teacher_id} updated.")
+                print(f"Teacher {id} updated.")
+                self._save_data()
                 return
-        print(f"Error: Teacher with ID {teacher_id} not found.")
+        print(f"Error: Teacher with ID {id} not found.")
 
-    def remove_teacher(self, teacher_id):
+    def remove_teacher(self, id):
         """Removes a teacher from the data store."""
         # Find the teacher with the matching ID.
         for teacher in self.teachers:
         # If found, use the .remove() method on the list to delete it.
-               if teacher.teacher_id == teacher_id:
+               if teacher.teacher_id == id:
                 self.teachers.remove(teacher)
-                print(f"Teacher {teacher_id} deleted.")
+                print(f"Teacher {id} deleted.")
+                self._save_data()
                 return
-        print(f"Error: Teacher with ID {teacher_id} not found.")
+        print(f"Error: Teacher with ID {id} not found.")
         
     def add_student(self, name, enrolled_in):
-        """Adds a student dictionary to the data store."""
-        #Create a new StudentUser object with 'id', 'name', and a list of what they're 
-        # enrolled in
-        student = StudentUser(self.next_student_id, name, [enrolled_in])
-        #Append the new object to the students list.
+        """enrolled_in should be a list of course IDs (ints) the student is enrolling in."""
+        student = StudentUser(self.next_student_id, name, enrolled_in)
         self.students.append(student)
-        #Increment the 'next_srudent_id'
+
+        for course_id in enrolled_in:
+            course = self.find_course_by_id(course_id)
+            if course:
+                course.enrolled_student_ids.append(student.student_id)
+            else:
+                print(f"Warning: Course {course_id} not found — student enrolled in name only.")
+
         self.next_student_id += 1
         print(f"Core: Student '{name}' added.")
+        self._save_data()
+        return student
 
     def update_student(self, student_id, **fields):
-        """Finds a student by ID and updates their data with provided fields."""
-        # Loop through the students list.
+        """Finds a student by ID and updates their data with provided fields.
+        If 'enrolled_in' is being changed, also syncs the old/new courses' rosters."""
         for student in self.students:
-            # If a teacher's 'id' matches teacher_id:
             if student.student_id == student_id:
-                # Update fields
+
+                if "enrolled_in" in fields:
+                    old_courses = student.enrolled_in
+                    new_courses = fields["enrolled_in"]
+
+                    # Remove the student from courses they're leaving.
+                    for course_id in old_courses:
+                        if course_id not in new_courses:
+                            course = self.find_course_by_id(course_id)
+                            if course and student_id in course.enrolled_student_ids:
+                                course.enrolled_student_ids.remove(student_id)
+
+                    # Add the student to courses they're newly joining.
+                    for course_id in new_courses:
+                        if course_id not in old_courses:
+                            course = self.find_course_by_id(course_id)
+                            if course and student_id not in course.enrolled_student_ids:
+                                course.enrolled_student_ids.append(student_id)
+
                 for key, value in fields.items():
                     setattr(student, key, value)
+
                 print(f"Student {student_id} updated.")
+                self._save_data()
                 return
         print(f"Error: Student with ID {student_id} not found.")
 
     def remove_student(self, student_id):
-        """Removes a student from the data store."""
-        # Find the student with the matching ID.
+        """Removes a student, and also removes them from every course's roster."""
         for student in self.students:
-        # If found, use the .remove() method on the list to delete it.
-           if student.student_id == student_id:
+            if student.student_id == student_id:
+                for course in self.courses:
+                    if student_id in course.enrolled_student_ids:
+                        course.enrolled_student_ids.remove(student_id)
                 self.students.remove(student)
                 print(f"Student {student_id} deleted.")
+                self._save_data()
                 return
         print(f"Error: Student with ID {student_id} not found.")
 
@@ -200,16 +237,22 @@ class ScheduleManager:
         return matches
 
     # --- Front Desk Functions  ---
-    def find_student_by_id(self, student_id):
+    def find_student_by_id(self, id):
         """A new helper to find one student by their exact ID."""
-        # Loop through students list. If a student's ID matches student_id, return the 
+        # Loop through students list. If a student's ID matches id, return the 
         # student object.
         for student in self.students:
-            if student.student_id == student_id:
+            if student.student_id == id:
                 return student
         # If the loop finishes without finding a match, return None.
         print("No Matches found")
-        return student
+        return None
+
+    def find_teacher_by_id(self, id):
+        for teacher in self.teachers:
+            if teacher.teacher_id == id:
+                return teacher
+        return None
 
     def front_desk_lookup(self, term):
         """High-level function to search everything."""
@@ -218,18 +261,18 @@ class ScheduleManager:
         self.find_teachers(term)
 
 
-    def print_student_card(self, student_id):
+    def print_student_card(self, id):
         """Creates a text file badge for a student."""
         # Find the student
         student_to_print = None
         for s in self.students:
-            if s.student_id == student_id:
+            if s.student_id == id:
                 student_to_print = s
                 break
         
         if student_to_print:
-            # Create a filename, e.g., f"{student_id}_card.txt".
-            filename = f"{student_id}_card.txt"
+            # Create a filename, e.g., f"{id}_card.txt".
+            filename = f"{id}_card.txt"
             # Open the file in write mode ('w').
             with open(filename, 'w') as f:
                 # Write the student's details to the file in a nice format.
@@ -238,32 +281,104 @@ class ScheduleManager:
                 f.write("========================\n")
                 f.write(f"ID: {student_to_print.student_id}\n")
                 f.write(f"Name: {student_to_print.name}\n")
-                f.write(f"Enrolled In: {', '.join(student_to_print.enrolled_in)}\n")
+                f.write(f"Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n")
             print(f"Printed student card to {filename}.")
         else:
-            print(f"Error: Could not print card, student {student_id} not found.")
+            print(f"Error: Could not print card, student {id} not found.")
 
-        def check_in(self, student_id, course_id):
-            """Records a student's attendance for a course after validation."""
-            # This implementation remains the same, but it will now function correctly.
-            student = self.find_student_by_id(student_id)
-            course = self.find_course_by_id(course_id)
+    def check_in(self, id, course_id):
+        """Records a student's attendance for a course after validation."""
+        student = self.find_student_by_id(id)
+        course = self.find_course_by_id(course_id)
+        
+        if not student or not course:
+            print("Error: Check-in failed. Invalid Student or Course ID.")
+            return False
             
-            if not student or not course:
-                print("Error: Check-in failed. Invalid Student or Course ID.")
-                return False
-                
-            timestamp = datetime.datetime.now().isoformat()
-            check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
-            
-            # This line will now work without causing an AttributeError.
-            self.attendance_log.append(check_in_record)
-            self._save_data() # This will now correctly save the attendance log.
-            print(f"Success: Student {student.name} checked into {course.name}.")
-            return True
+        timestamp = datetime.datetime.now().isoformat()
+        check_in_record = {"student_id": id, "course_id": course_id, "timestamp": timestamp}
+        
+        # This line will now work without causing an AttributeError.
+        self.attendance_log.append(check_in_record)
+        self._save_data() # Save the attendance log.
+        print(f"Success: Student {student.name} checked into {course.name}.")
+        return True
 
-        def find_course_by_id(self, course_id):
-            for course in self.courses:
-                if course.course_id == course_id:
-                    return course
+    def find_course_by_id(self, course_id):
+        for course in self.courses:
+            if course.course_id == course_id:
+                return course
+        return None
+
+    def get_lessons_for_day(self, day):
+        """Returns a list of (course, lesson) pairs scheduled on the given day."""
+        result = []
+        for course in self.courses:
+            for lesson in course.lessons_on_day(day):
+                result.append((course, lesson))
+        return result
+
+    def add_course(self, course_id, name, instrument, id=None):
+        """Creates a new course with no students enrolled and no lessons yet."""
+        # Validate course does not exist already
+        if self.find_course_by_id(course_id) is not None:
+            print(f"Error: Course ID {course_id} already exists.")
             return None
+
+        course = Course(course_id, name, instrument, id,
+                        enrolled_student_ids=[], lessons=[])
+        self.courses.append(course)
+        print(f"Core: Course '{name}' added.")
+        self._save_data()
+        return course
+
+    def add_lesson_to_course(self, course_id, day, start_time, room):
+        """Adds a new lesson slot to an existing course."""
+        course = self.find_course_by_id(course_id)
+        if not course:
+            print(f"Error: Course {course_id} not found.")
+            return False
+
+        lesson_id = self.next_lesson_id
+        self.next_lesson_id += 1
+        course.lessons.append({
+            "lesson_id": lesson_id,
+            "day": day,
+            "start_time": start_time,
+            "room": room,
+        })
+        self._save_data()
+        print(f"Lesson added to '{course.name}' on {day} at {start_time}.")
+        return True
+
+        
+    def switch_student_course(self, student_id, from_course_id, to_course_id):
+        """Moves a student from one course to another, keeping both
+        StudentUser.enrolled_in and Course.enrolled_student_ids in sync."""
+        student = self.find_student_by_id(student_id)
+        from_course = self.find_course_by_id(from_course_id)
+        to_course = self.find_course_by_id(to_course_id)
+
+        if not student:
+            print(f"Error: Student {student_id} not found.")
+            return False
+        if not from_course or not to_course:
+            print("Error: Invalid course ID(s).")
+            return False
+        if student_id not in from_course.enrolled_student_ids:
+            print(f"Error: Student {student_id} is not enrolled in course {from_course_id}.")
+            return False
+
+        # Update the course rosters.
+        from_course.enrolled_student_ids.remove(student_id)
+        to_course.enrolled_student_ids.append(student_id)
+
+        # Update the student's own record to match.
+        if from_course_id in student.enrolled_in:
+            student.enrolled_in.remove(from_course_id)
+        if to_course_id not in student.enrolled_in:
+            student.enrolled_in.append(to_course_id)
+
+        self._save_data()
+        print(f"Success: {student.name} switched from '{from_course.name}' to '{to_course.name}'.")
+        return True

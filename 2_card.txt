@@ -1,6 +1,0 @@
-========================
-  MUSIC SCHOOL ID BADGE
-========================
-ID: 2
-Name: Chiara
-Enrolled In: Keyboard
