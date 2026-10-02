@@ -174,8 +174,9 @@ class ScheduleManager:
 
                 print(f"Student {student_id} updated.")
                 self._save_data()
-                return
+                return True
         print(f"Error: Student with ID {student_id} not found.")
+        return False
 
     def remove_student(self, student_id):
         """Removes a student, and also removes them from every course's roster."""
@@ -187,8 +188,9 @@ class ScheduleManager:
                 self.students.remove(student)
                 print(f"Student {student_id} deleted.")
                 self._save_data()
-                return
+                return True
         print(f"Error: Student with ID {student_id} not found.")
+        return False
 
     
     def list_students(self):
@@ -382,3 +384,8 @@ class ScheduleManager:
         self._save_data()
         print(f"Success: {student.name} switched from '{from_course.name}' to '{to_course.name}'.")
         return True
+
+    def find_courses_by_instrument(self, instrument):
+        """Returns all courses for an instrument (case-insensitive)."""
+        return [c for c in self.courses
+                if c.instrument.lower() == instrument.strip().lower()]

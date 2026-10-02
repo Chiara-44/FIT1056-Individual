@@ -1,11 +1,11 @@
 {
     "students": [
         {
-            "name": "Alice Johnson",
+            "name": "Alex Johnson",
             "student_id": 1,
             "enrolled_in": [
                 101,
-                103
+                102
             ]
         },
         {
@@ -13,6 +13,13 @@
             "student_id": 2,
             "enrolled_in": [
                 101
+            ]
+        },
+        {
+            "name": "Bailey Lawson",
+            "student_id": 3,
+            "enrolled_in": [
+                102
             ]
         }
     ],
@@ -58,7 +65,10 @@
             "name": "Acoustic Guitar Fundamentals",
             "instrument": "Guitar",
             "teacher_id": 2,
-            "enrolled_student_ids": [],
+            "enrolled_student_ids": [
+                3,
+                1
+            ],
             "lessons": [
                 {
                     "lesson_id": 3,
@@ -73,9 +83,7 @@
             "name": "Intermediate Piano",
             "instrument": "Piano",
             "teacher_id": 1,
-            "enrolled_student_ids": [
-                1
-            ],
+            "enrolled_student_ids": [],
             "lessons": []
         }
     ],
@@ -86,7 +94,7 @@
             "timestamp": "2026-09-07T21:49:19.113467"
         }
     ],
-    "next_student_id": 3,
+    "next_student_id": 4,
     "next_teacher_id": 3,
     "next_lesson_id": 4
 }

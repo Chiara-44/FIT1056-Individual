@@ -1,5 +1,6 @@
 # main.py - The View Layer
 from app.schedule import ScheduleManager
+from gui.main_dashboard import launch
 
 def front_desk_daily_roster(manager, day):
     """Displays a pretty table of all lessons on a given day."""
@@ -131,47 +132,49 @@ def other_menu(manager):
 
 
 def main():
-    """Main function to run the MSMS application."""
-    manager = ScheduleManager()  # Create ONE instance of the application brain.
-    manager._load_data()
+    # """Main function to run the MSMS application."""
+    # manager = ScheduleManager()  # Create ONE instance of the application brain.
+    # manager._load_data()
+
+    launch()
 
 
-    while True:
-        print("\n===== MSMS v3 (Object-Oriented) =====")
-        print("1. Check-in Student")
-        print("2. Print Student Card")
-        print("3. Student Management")
-        print("4. Teacher Management")
-        print("5. Course Management")
-        print("6. Daily Roster")
-        print("7. Other")
-        print("q. Quit")
+    # while True:
+    #     print("\n===== MSMS v3 (Object-Oriented) =====")
+    #     print("1. Check-in Student")
+    #     print("2. Print Student Card")
+    #     print("3. Student Management")
+    #     print("4. Teacher Management")
+    #     print("5. Course Management")
+    #     print("6. Daily Roster")
+    #     print("7. Other")
+    #     print("q. Quit")
 
-        choice = input("Enter choice: ")
+    #     choice = input("Enter choice: ")
 
-        if choice == '1':
-            student_id = int(input("Enter student ID: "))
-            course_id = int(input("Enter course ID: "))
-            manager.check_in(student_id, course_id)
-        elif choice == '2':
-            student_id = int(input("Enter student ID: "))
-            manager.print_student_card(student_id)
-        elif choice == '3':
-            student_menu(manager)
-        elif choice == '4':
-            teacher_menu(manager)
-        elif choice == '5':
-            course_menu(manager)
-        elif choice == '6':
-            day = input("Enter day (e.g., Monday): ")
-            front_desk_daily_roster(manager, day)
-        elif choice == '7':
-            other_menu(manager)
-        elif choice.lower() == 'q':
-            print("Goodbye.")
-            break
-        else:
-            print("Invalid choice.")
+    #     if choice == '1':
+    #         student_id = int(input("Enter student ID: "))
+    #         course_id = int(input("Enter course ID: "))
+    #         manager.check_in(student_id, course_id)
+    #     elif choice == '2':
+    #         student_id = int(input("Enter student ID: "))
+    #         manager.print_student_card(student_id)
+    #     elif choice == '3':
+    #         student_menu(manager)
+    #     elif choice == '4':
+    #         teacher_menu(manager)
+    #     elif choice == '5':
+    #         course_menu(manager)
+    #     elif choice == '6':
+    #         day = input("Enter day (e.g., Monday): ")
+    #         front_desk_daily_roster(manager, day)
+    #     elif choice == '7':
+    #         other_menu(manager)
+    #     elif choice.lower() == 'q':
+    #         print("Goodbye.")
+    #         break
+    #     else:
+    #         print("Invalid choice.")
 
 
 
