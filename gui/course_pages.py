@@ -2,34 +2,6 @@
 import streamlit as st
 import datetime
 
-# print("\n--- Course Management ---")
-        # print("1. Add New Course")
-        # print("2. Add Lesson to Course")
-        # print("3. Switch Student's Course")
-        # print("b. Back to Main Menu")
-
-# if choice == '1':
-#             course_id = int(input("Enter new course ID: "))
-#             name = input("Enter course name: ")
-#             instrument = input("Enter instrument: ")
-#             teacher_id = input("Enter teacher ID (or leave blank): ")
-#             teacher_id = int(teacher_id) if teacher_id else None
-#             manager.add_course(course_id, name, instrument, teacher_id)
-#         elif choice == '2':
-#             course_id = int(input("Enter course ID: "))
-#             day = input("Enter day: ")
-#             start_time = input("Enter start time (e.g. 16:00): ")
-#             room = input("Enter room: ")
-#             manager.add_lesson_to_course(course_id, day, start_time, room)
-#         elif choice == '3':
-#             student_id = int(input("Enter student ID: "))
-#             from_course_id = int(input("Enter current course ID: "))
-#             to_course_id = int(input("Enter new course ID: "))
-#             manager.switch_student_course(student_id, from_course_id, to_course_id)
-#         elif choice.lower() == 'b':
-#             break
-#         else:
-#             print("Invalid choice.")
 
 def show_course_management_page(manager):
     """Renders all components for the course management page."""

@@ -270,26 +270,26 @@ class ScheduleManager:
         """Creates a text file badge for a student."""
         # Find the student
         student_to_print = None
-        for s in self.students:
-            if s.student_id == id:
-                student_to_print = s
-                break
+        student_to_print = self.find_student_by_id(id)
         
         if student_to_print:
             # Create a filename, e.g., f"{id}_card.txt".
             filename = f"{id}_card.txt"
             # Open the file in write mode ('w').
-            with open(filename, 'w') as f:
+            data = (
                 # Write the student's details to the file in a nice format.
-                f.write("========================\n")
-                f.write(f"  MUSIC SCHOOL ID BADGE\n")
-                f.write("========================\n")
-                f.write(f"ID: {student_to_print.student_id}\n")
-                f.write(f"Name: {student_to_print.name}\n")
-                f.write(f"Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n")
+                "========================\n"
+                "  MUSIC SCHOOL ID BADGE\n"
+                "========================\n"
+                "ID: {student_to_print.student_id}\n"
+                "Name: {student_to_print.name}\n"
+                "Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n"
+            )
             print(f"Printed student card to {filename}.")
+            return(filename, data)
         else:
             print(f"Error: Could not print card, student {id} not found.")
+            return None
 
     def check_in(self, id, course_id):
         """Records a student's attendance for a course after validation."""
@@ -396,3 +396,22 @@ class ScheduleManager:
         """Returns all courses for an instrument (case-insensitive)."""
         return [c for c in self.courses
                 if c.instrument.lower() == instrument.strip().lower()]
+
+    def front_desk_daily_roster(self, day):
+        """Displays a pretty table of all lessons on a given day."""
+        # print(f"\n--- Daily Roster for {day} ---")
+        lessons = self.get_lessons_for_day(day)
+
+        if not lessons:
+            print("No lessons scheduled for this day.")
+            return
+
+        rows = []
+        for course, lesson in lessons:
+            teacher = self.find_teacher_by_id(course.teacher_id)
+            teacher_name = teacher.name if teacher else "Unassigned"
+            # print(f"  {lesson['start_time']} - {course.name} ({course.instrument}) "
+                # f"- Teacher: {teacher_name} - Room: {lesson['room']}")
+            rows.append({"time": lesson['start_time'], "name": course.name, "instrument": course.instrument, 
+                    "teacher": teacher_name, "room":lesson['room']})
+        return rows

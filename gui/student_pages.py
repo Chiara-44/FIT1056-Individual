@@ -126,6 +126,33 @@ def show_student_management_page(manager):
 
     st.divider()
 
+    # --- Print Student Card ---
+    st.subheader("Print Student Card")
+
+    with st.form("print_student_card"):
+        student_options = {f"{c.student_id}: {c.name} ": c.student_id
+                        for c in manager.students}
+        del_label = st.selectbox("Student", list(student_options.keys()), index=None,
+                                    placeholder="Select a Student")
+        submitted = st.form_submit_button("Prepare Student Card")
+    if submitted:
+        try:
+            filename, data = manager.print_student_card(student_options[del_label]) 
+        except :
+            return
+        st.download_button(
+            label=f"Download Student {student_options[del_label]}'s File",
+            data=data,
+            file_name=filename,
+            mime="text/plain"
+            )
+
+
+    
+    
+    st.divider()
+
+
     # --- List Students ---
     st.subheader("All Students")
 

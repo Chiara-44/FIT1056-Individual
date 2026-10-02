@@ -9,14 +9,36 @@ def show_roster_page(manager):
     # --- View Roster Section (remains the same) ---
     day = st.selectbox("Select a day", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
     # ... (code to display the dataframe) ...
+
+
+
+    if manager.front_desk_daily_roster(day):
+        rows = []
+        for r in manager.front_desk_daily_roster(day):
+            rows.append({
+                "Time": r['time'],
+                "Name": r['name'],
+                "Instrument": r['instrument'],
+                "Teacher": r['teacher'],
+                "Room": r['room']
+            })
+
+        st.caption(f"{len(rows)} lessons")
+        st.dataframe(rows, hide_index=True, width='stretch')
+    else:
+        st.info("No Lessons Today.")
+
+    st.divider()
+
+
     
     # --- Student Check-in Section (now works correctly) ---
     st.subheader("Student Check-in")
     with st.form("check_in_form"):
         # To make this user-friendly, we should populate the dropdowns dynamically.
         # Get lists of student names and course names from the manager.
-        student_list = {s.name: s.id for s in manager.students}
-        course_list = {c.name: c.id for c in manager.courses}
+        student_list = {s.name: s.student_id for s in manager.students}
+        course_list = {c.name: c.course_id for c in manager.courses}
         
         selected_student_name = st.selectbox("Select Student", student_list.keys())
         selected_course_name = st.selectbox("Select Course", course_list.keys())

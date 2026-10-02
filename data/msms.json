@@ -80,12 +80,6 @@
                     "day": "Friday",
                     "start_time": "02:30",
                     "room": "Room A"
-                },
-                {
-                    "lesson_id": 5,
-                    "day": "Friday",
-                    "start_time": "02:30",
-                    "room": "Room A"
                 }
             ]
         },
@@ -104,6 +98,12 @@
                     "day": "Tuesday",
                     "start_time": "17:00",
                     "room": "Room C"
+                },
+                {
+                    "lesson_id": 7,
+                    "day": "Friday",
+                    "start_time": "14:00",
+                    "room": "Room D"
                 }
             ]
         },
@@ -128,5 +128,5 @@
     ],
     "next_student_id": 5,
     "next_teacher_id": 6,
-    "next_lesson_id": 7
+    "next_lesson_id": 8
 }
