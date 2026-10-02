@@ -4,22 +4,24 @@
             "name": "Alex Johnson",
             "student_id": 1,
             "enrolled_in": [
-                101,
-                102
+                102,
+                101
             ]
         },
         {
             "name": "Bob Williams",
             "student_id": 2,
             "enrolled_in": [
-                101
+                101,
+                103
             ]
         },
         {
             "name": "Bailey Lawson",
             "student_id": 3,
             "enrolled_in": [
-                102
+                102,
+                103
             ]
         }
     ],
@@ -30,9 +32,24 @@
             "speciality": "Piano"
         },
         {
-            "name": "Mr. David Fret\"",
+            "name": "Dr. David Fret",
             "teacher_id": 2,
             "speciality": "Guitar"
+        },
+        {
+            "name": "Mr. David Hambly",
+            "teacher_id": 3,
+            "speciality": "Band"
+        },
+        {
+            "name": "Ms. Velma Dinkley",
+            "teacher_id": 4,
+            "speciality": "Alto Saxophone"
+        },
+        {
+            "name": "Mrs. Lily Banks",
+            "teacher_id": 5,
+            "speciality": "Baritone Horn"
         }
     ],
     "courses": [
@@ -42,8 +59,8 @@
             "instrument": "Piano",
             "teacher_id": 1,
             "enrolled_student_ids": [
-                1,
-                2
+                2,
+                1
             ],
             "lessons": [
                 {
@@ -56,6 +73,18 @@
                     "lesson_id": 2,
                     "day": "Wednesday",
                     "start_time": "16:00",
+                    "room": "Room A"
+                },
+                {
+                    "lesson_id": 4,
+                    "day": "Friday",
+                    "start_time": "02:30",
+                    "room": "Room A"
+                },
+                {
+                    "lesson_id": 5,
+                    "day": "Friday",
+                    "start_time": "02:30",
                     "room": "Room A"
                 }
             ]
@@ -83,7 +112,10 @@
             "name": "Intermediate Piano",
             "instrument": "Piano",
             "teacher_id": 1,
-            "enrolled_student_ids": [],
+            "enrolled_student_ids": [
+                2,
+                3
+            ],
             "lessons": []
         }
     ],
@@ -94,7 +126,7 @@
             "timestamp": "2026-09-07T21:49:19.113467"
         }
     ],
-    "next_student_id": 4,
-    "next_teacher_id": 3,
-    "next_lesson_id": 4
+    "next_student_id": 5,
+    "next_teacher_id": 6,
+    "next_lesson_id": 7
 }

@@ -113,8 +113,9 @@ class ScheduleManager:
                     setattr(teacher, key, value)
                 print(f"Teacher {id} updated.")
                 self._save_data()
-                return
+                return True
         print(f"Error: Teacher with ID {id} not found.")
+        return False
 
     def remove_teacher(self, id):
         """Removes a teacher from the data store."""
@@ -125,8 +126,9 @@ class ScheduleManager:
                 self.teachers.remove(teacher)
                 print(f"Teacher {id} deleted.")
                 self._save_data()
-                return
+                return True
         print(f"Error: Teacher with ID {id} not found.")
+        return False
         
     def add_student(self, name, enrolled_in):
         """enrolled_in should be a list of course IDs (ints) the student is enrolling in."""
@@ -219,6 +221,7 @@ class ScheduleManager:
         matches = [s for s in self.students if term.lower() in s.name.lower()]
         if not matches:
             print("No match found.")
+            return False
         else:
             for student in matches:
                 print(f"  ID: {student.student_id}, Name: {student.name}, Enrolled in: {student.enrolled_in}")
@@ -325,14 +328,18 @@ class ScheduleManager:
         # Validate course does not exist already
         if self.find_course_by_id(course_id) is not None:
             print(f"Error: Course ID {course_id} already exists.")
-            return None
+            return 101
 
+        if self.find_teacher_by_id(id) is None:
+           print(f"Error: teacher with ID {id} not found")
+           return 102
+            
         course = Course(course_id, name, instrument, id,
                         enrolled_student_ids=[], lessons=[])
         self.courses.append(course)
         print(f"Core: Course '{name}' added.")
         self._save_data()
-        return course
+        return True
 
     def add_lesson_to_course(self, course_id, day, start_time, room):
         """Adds a new lesson slot to an existing course."""
@@ -351,7 +358,7 @@ class ScheduleManager:
         })
         self._save_data()
         print(f"Lesson added to '{course.name}' on {day} at {start_time}.")
-        return True
+        return lesson_id
 
         
     def switch_student_course(self, student_id, from_course_id, to_course_id):

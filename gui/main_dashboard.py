@@ -16,9 +16,10 @@ def launch():
     if 'manager' not in st.session_state:
         st.session_state.manager = ScheduleManager()
 
+
     st.sidebar.title("MSMS Navigation")
     # Create a radio button menu in the sidebar for page navigation.
-    page = st.sidebar.radio("Go to", ["Student Management", "Teacher Management", "Course Managemnet", "Daily Roster", "Payments (stub)"])
+    page = st.sidebar.radio("Go to", ["Student Management", "Teacher Management", "Course Management", "Daily Roster", "Payments (stub)"])
 
     # Use an if/elif block to call the correct function to render the selected page.
     if page == "Student Management":
