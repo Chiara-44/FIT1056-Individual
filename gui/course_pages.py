@@ -14,28 +14,30 @@ def show_course_management_page(manager):
         reg_course_ID = st.text_input("New Course ID")
         reg_name = st.text_input("New Course Name")
         reg_instrument = st.text_input("New Course Instrument")
-        reg_teacher_ID = st.text_input("Teacher ID")
+        teacher_options = {f"{c.teacher_id}: {c.name} ": c.teacher_id
+                        for c in manager.teachers}
+        del_label = st.selectbox("Teacher", list(teacher_options.keys()),
+                                index=None, placeholder="Select a Teacher")
         submitted = st.form_submit_button("Add Course")
 
 
 
     if submitted:
         if not (reg_course_ID.strip() and reg_name.strip()
-                and reg_instrument.strip() and reg_teacher_ID.strip()):
+                and reg_instrument.strip() and teacher_options[del_label]):
             st.warning("Please enter a course ID, course name, instrument, and teacher ID.")
         else:
             try:
                 clean_course_ID = int(reg_course_ID.strip())
-                clean_teacher_ID = int(reg_teacher_ID.strip())
             except ValueError:
                 st.warning("Course ID and Teacher ID must be whole numbers.")
             else:
                 course = manager.add_course(clean_course_ID, reg_name.strip(),
-                                            reg_instrument.strip(), clean_teacher_ID)
+                                            reg_instrument.strip(), teacher_options[del_label])
                 if course == 101:
                     st.warning(f"Course ID {clean_course_ID} already exists.")
                 elif course == 102:
-                    st.warning(f"Teacher with ID {clean_teacher_ID} not found.")
+                    st.warning(f"Teacher with ID {teacher_options[del_label]} not found.")
                 else:
                     st.success(f"Added {reg_name}.")
 
@@ -68,4 +70,22 @@ def show_course_management_page(manager):
                 course = manager.find_course_by_id(course_id)
                 st.success(f"Added Lesson with Lesson ID: {lesson_id} to {course_id}: {course.name}")
 
-        
+    st.divider()
+
+    # --- List Courses ---
+    st.subheader("All Courses")
+
+    if manager.courses:
+        rows = []
+        for c in manager.courses:
+            rows.append({
+                "Course ID": c.course_id,
+                "Name": c.name,
+                "Instrument": c.instrument,
+                "Teacher": manager.find_teacher_by_id(c.teacher_id).name
+            })
+
+        st.caption(f"{len(rows)} courses")
+        st.dataframe(rows, hide_index=True, width='stretch')
+    else:
+        st.info("No courses in the system.")

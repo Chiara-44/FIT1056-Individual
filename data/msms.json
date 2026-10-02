@@ -23,6 +23,13 @@
                 102,
                 103
             ]
+        },
+        {
+            "name": "Chiara Gillam",
+            "student_id": 5,
+            "enrolled_in": [
+                101
+            ]
         }
     ],
     "teachers": [
@@ -60,7 +67,8 @@
             "teacher_id": 1,
             "enrolled_student_ids": [
                 2,
-                1
+                1,
+                5
             ],
             "lessons": [
                 {
@@ -117,6 +125,14 @@
                 3
             ],
             "lessons": []
+        },
+        {
+            "course_id": 104,
+            "name": "Advanced Piano",
+            "instrument": "Piano",
+            "teacher_id": 4,
+            "enrolled_student_ids": [],
+            "lessons": []
         }
     ],
     "attendance": [
@@ -126,7 +142,7 @@
             "timestamp": "2026-09-07T21:49:19.113467"
         }
     ],
-    "next_student_id": 5,
+    "next_student_id": 6,
     "next_teacher_id": 6,
     "next_lesson_id": 8
 }
