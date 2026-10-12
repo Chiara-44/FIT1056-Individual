@@ -1,5 +1,6 @@
 import json
 import datetime
+import csv
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course
 
@@ -454,6 +455,18 @@ class ScheduleManager:
     # Create the powerful export_report(kind, out_path) method to write
     # financial or attendance data to a CSV file
     def export_report(self, kind, out_path):
-        """method to write financial or attendance data to a CSV file"""
         if kind == "financial":
-            self.get_payment_history()
+            data = self.finance_log
+        elif kind == "attendance":
+            data = self.attendance_log   # use whatever your attendance list is called
+        else:
+            raise ValueError(f"Unknown report kind: {kind}")
+
+        if not data:
+            return False   # nothing to export
+
+        with open(out_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=data[0].keys())
+            writer.writeheader()
+            writer.writerows(data)
+        return True
