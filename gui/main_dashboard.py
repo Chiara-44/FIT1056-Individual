@@ -4,7 +4,7 @@ from app.schedule import ScheduleManager
 from gui.student_pages import show_student_management_page
 from gui.teacher_pages import show_teacher_management_page
 from gui.course_pages import show_course_management_page
-
+from gui.finance_pages import show_finance_page
 from gui.roster_pages import show_roster_page
 
 def launch():
@@ -31,5 +31,4 @@ def launch():
     elif page == "Daily Roster":
         show_roster_page(st.session_state.manager)
     elif page == "Payments (stub)":
-        st.header("Payments")
-        st.warning("This feature will be implemented in PST5.")
+        show_finance_page(st.session_state.manager)

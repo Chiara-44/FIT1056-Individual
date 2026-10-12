@@ -12,6 +12,7 @@ class ScheduleManager:
         self.courses = []
         # Initialize the new attendance_log attribute as an empty list.
         self.attendance_log = []
+        self.finance_log = []
         self.next_student_id = 1
         self.next_teacher_id = 1
         self.next_lesson_id = 1
@@ -36,6 +37,7 @@ class ScheduleManager:
                 # Use .get() with a default empty list to prevent errors if the key doesn't 
                 # exist.
                 self.attendance_log = data.get("attendance", [])
+                self.finance_log = data.get("finance", [])
         except FileNotFoundError:
             print("Data file not found. Starting with a clean state.")
     
@@ -49,6 +51,7 @@ class ScheduleManager:
             # Add the attendance_log to the dictionary to be saved.
             # Since it's already a list of dicts, no conversion is needed.
             "attendance": self.attendance_log,
+            "finance": self.finance_log,
             "next_student_id": self.next_student_id,
             "next_teacher_id": self.next_teacher_id,
             "next_lesson_id": self.next_lesson_id,
@@ -281,9 +284,9 @@ class ScheduleManager:
                 "========================\n"
                 "  MUSIC SCHOOL ID BADGE\n"
                 "========================\n"
-                "ID: {student_to_print.student_id}\n"
-                "Name: {student_to_print.name}\n"
-                "Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n"
+                f"ID: {student_to_print.student_id}\n"
+                f"Name: {student_to_print.name}\n"
+                f"Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n"
             )
             print(f"Printed student card to {filename}.")
             return(filename, data)
@@ -415,3 +418,42 @@ class ScheduleManager:
             rows.append({"time": lesson['start_time'], "name": course.name, "instrument": course.instrument, 
                     "teacher": teacher_name, "room":lesson['room']})
         return rows
+
+    # Create the record_payment(student_id, amount, method) method,
+    # which will add a new payment dictionary to the finance log.
+    def record_payment(self, student_id, amount, method):
+        """Records a student's payemnt."""
+        student = self.find_student_by_id(student_id)
+        
+        if not student:
+            print("Error: record payment failed. Invalid student ID.")
+            return False
+            
+        timestamp = datetime.datetime.now().isoformat()
+        payment_record = {"student_id": student_id, "amount": amount, "method": method, "timestamp": timestamp}
+        
+        self.finance_log.append(payment_record)
+        self._save_data() # Save the payement log.
+        print(f"Success: Student {student.name} made a payment")
+        return True
+
+    # Create the get_payment_history(student_id) method to retrieve all
+    # transactions for a single student
+    def get_payment_history(self, student_id):
+        """retrieves all transactions for a single student."""
+        # Find the student
+        payments_made_by_student = []
+        for payment in self.finance_log:
+            if student_id == payment['student_id']:
+                payments_made_by_student.append(payment)
+
+        print(f"{payments_made_by_student}")
+        return payments_made_by_student
+
+
+    # Create the powerful export_report(kind, out_path) method to write
+    # financial or attendance data to a CSV file
+    def export_report(self, kind, out_path):
+        """method to write financial or attendance data to a CSV file"""
+        if kind == "financial":
+            self.get_payment_history()

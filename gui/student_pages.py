@@ -136,16 +136,17 @@ def show_student_management_page(manager):
                                     placeholder="Select a Student")
         submitted = st.form_submit_button("Prepare Student Card")
     if submitted:
-        try:
-            filename, data = manager.print_student_card(student_options[del_label]) 
-        except :
-            return
-        st.download_button(
-            label=f"Download Student {student_options[del_label]}'s File",
-            data=data,
-            file_name=filename,
-            mime="text/plain"
-            )
+        if del_label:
+            try:
+                filename, data = manager.print_student_card(student_options[del_label]) 
+            except :
+                return
+            st.download_button(
+                label=f"Download Student {student_options[del_label]}'s File",
+                data=data,
+                file_name=filename,
+                mime="text/plain"
+                )
 
 
     

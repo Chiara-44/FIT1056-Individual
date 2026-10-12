@@ -25,8 +25,8 @@
             ]
         },
         {
-            "name": "Chiara Gillam",
-            "student_id": 5,
+            "name": "John Pork",
+            "student_id": 6,
             "enrolled_in": [
                 101
             ]
@@ -68,7 +68,7 @@
             "enrolled_student_ids": [
                 2,
                 1,
-                5
+                6
             ],
             "lessons": [
                 {
@@ -142,7 +142,27 @@
             "timestamp": "2026-09-07T21:49:19.113467"
         }
     ],
-    "next_student_id": 6,
+    "finance": [
+        {
+            "student_id": 1,
+            "amount": 100.0,
+            "method": "Credit Card",
+            "timestamp": "2026-10-13T10:29:44.961048"
+        },
+        {
+            "student_id": 2,
+            "amount": 100.0,
+            "method": "Credit Card",
+            "timestamp": "2026-10-13T10:30:04.138372"
+        },
+        {
+            "student_id": 1,
+            "amount": 0.01,
+            "method": "Credit Card",
+            "timestamp": "2026-10-13T10:38:59.618849"
+        }
+    ],
+    "next_student_id": 7,
     "next_teacher_id": 6,
     "next_lesson_id": 8
 }

@@ -7,6 +7,9 @@ PST2 adds a persistence model to the app and adds new functionalities such as th
 
 PST3 rebuilds the project with a professional Object-Oriented (OOP) design
 
+PST4 Replace the text console with a modern Graphical User
+Interface (GUI).
+
 ## The persistence data model and object oriented data structure
 All application data is stored in a single JSON file (data/msms.json), organized under five top-level keys:
 
@@ -54,7 +57,11 @@ The app provides the ability to Create, Read, Update, and Delete all student, te
 ***add_lesson_to_course*** - Takes a course ID, day, start time, and room, and adds a new lesson slot to an existing course's schedule.
  
 ***switch_student_course*** - Takes a student ID and two course IDs (the course they're leaving and the course they're joining) and moves the student between them, keeping both the student's own record and both courses' rosters in sync.
+
+***find_courses_by_instrument*** - Returns all courses for an instrument (case-insensitive).
  
+***def front_desk_daily_roster(self, day)*** - Returns all lessons on a given day.
+
 ## Front Desk Functions
  
 ***find_student_by_id*** - Takes a student ID and finds one student by their exact ID.
@@ -82,48 +89,52 @@ app/
   schedule.py    - ScheduleManager: the controller layer described above
 data/
   msms.json      - persistent data store
+gui/
+  course_pages.py   - code for how the course page looks and works in the gui
+  main_dashboard.py - Streamlit setup and how navigation of site works
+  roster_pages.py   - code for how the roster page looks and works in the gui
+  student_pages.py  - code for how the student page looks and works in the gui
+  teacher_pages.py  - code for how the teacher page looks and works in the gui
+
 main.py           - the view layer: menu loop and user interaction
 ```
  
 ## Menu Overview
 
 ```
-Main Menu
-├── 1. Check-in Student
-├── 2. Print Student Card
-├── 3. Student Management
-│   ├── 1. Register New Student
-│   ├── 2. Update Student Info
-│   ├── 3. Remove Student
-│   ├── 4. List All Students
+├── Student Management
+│   ├── Find a Student by Name
+│   ├── Register New Student
+│   ├── Update Student Info
+│   ├── Remove Student
+│   ├── All Students
+├── Teacher Management
+│   ├── Find a Teacher by Name or Specialty
+│   ├── Register New Teacher
+│   ├── Update Teacher Info
+│   ├── Remove Teacher
+│   ├── All Teachers
 │   └── b. Back to Main Menu
-├── 4. Teacher Management
-│   ├── 1. Register New Teacher
-│   ├── 2. Update Teacher Info
-│   ├── 3. Remove Teacher
-│   ├── 4. List All Teachers
-│   └── b. Back to Main Menu
-├── 5. Course Management
-│   ├── 1. Add New Course
-│   ├── 2. Add Lesson to Course
-│   ├── 3. Switch Student's Course
-│   └── b. Back to Main Menu
-|── 6. Daily Roster
-├── 7. Other
-│   ├── 1. Lookup Student or Teacher
-│   └── b. Back to Main Menu
-└── q. Quit
+├── Course Management
+│   ├── Add New Course
+│   ├── Add Lesson to Course
+|── Daily Roster
+│   ├── Daily Roster
+│   ├── Student Check in
+|── Payments
+│   ├── To be implemented in PST5
+
+
 ```
 
 
 
 ## Main Application
-The main application starts off by loading in the data from the JSON file. It runs a while loop showing a main menu with 7 options: check in a student, print a student card, student management, teacher management, course management, Daily roster and quit. Picking student, teacher, or course management opens a submenu with the CRUD options specific to that entity, so the user doesn't have to pick from one long list. Each option guides the user to input the arguments needed to fulfil that function. The program saves changes immediately after any change is made, rather than waiting until the user quits.
+The main.py application launches the streamlit site that is defined in main_dashboard.py. The application then reads from the msms.json and constructs the necessary structs from it to be stored in working memory. The navigation menu is simple to follow and for each class there are CRUD options to edit Students, Teachers and Courses. The full navigation stack is described above. Each option guides the user to input the arguments needed to fulfil that function. The program saves changes immediately after any change is made, rather than waiting until the user quits.
 
 ## Running the application
 The application is designed to run in python 3.14. running the application is as simple as executing the following command at the directory root:
 ```
-python main.py
+streamlit run main.py
 ```
- The GUI can be seen in the terminal. Interacting with the GUI is done through the terminal as well.
-
+ The GUI can be seen in a browser at http://localhost:8501/
