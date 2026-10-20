@@ -204,9 +204,12 @@ class ScheduleManager:
         print("\n--- Student List ---")
         if not self.students:
             print("No students in the system.")
-            return
+            return False
+        students = []
         for student in self.students:
             print(f"  ID: {student.student_id}, Name: {student.name}, Enrolled in: {student.enrolled_in}")
+            students.append(student)
+        return students
 
     def list_teachers(self):
         """Prints all teachers in the database."""
@@ -214,9 +217,12 @@ class ScheduleManager:
         print("\n--- Teacher List ---")
         if not self.teachers:
             print("No teachers in the system.")
-            return
+            return False
+        teachers = []
         for teacher in self.teachers:
             print(f"  ID: {teacher.teacher_id}, Name: {teacher.name}, Speciality: {teacher.speciality}")
+            teachers.append(teacher)
+        return teachers
 
     def find_students(self, term):
         """Finds students by name."""
@@ -240,6 +246,7 @@ class ScheduleManager:
                 if term.lower() in t.name.lower() or term.lower() in t.speciality.lower()]
         if not matches:
             print("No match found.")
+            return False
         else:
             for teacher in matches:
                 print(f"  ID: {teacher.teacher_id}, Name: {teacher.name}, Speciality: {teacher.speciality}")
@@ -266,8 +273,15 @@ class ScheduleManager:
     def front_desk_lookup(self, term):
         """High-level function to search everything."""
         print(f"\n--- Performing lookup for '{term}' ---")
-        self.find_students(term)
-        self.find_teachers(term)
+        students = self.find_students(term)
+        teachers = self.find_teachers(term)
+        result = []
+        if students: result.append(students)
+        if teachers: result.append(teachers)
+        if not result:
+            return None
+        print(result)
+        return result
 
 
     def print_student_card(self, id):
@@ -283,11 +297,11 @@ class ScheduleManager:
             data = (
                 # Write the student's details to the file in a nice format.
                 "========================\n"
-                "  MUSIC SCHOOL ID BADGE\n"
+                "MUSIC SCHOOL ID BADGE\n"
                 "========================\n"
                 f"ID: {student_to_print.student_id}\n"
                 f"Name: {student_to_print.name}\n"
-                f"Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}\n"
+                f"Enrolled In: {', '.join(str(c) for c in student_to_print.enrolled_in)}"
             )
             print(f"Printed student card to {filename}.")
             return(filename, data)
